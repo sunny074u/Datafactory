@@ -1,0 +1,163 @@
+{
+	"name": "copy_from_db",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach_2qz",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy_2qz",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source.tableName}"
+								},
+								{
+									"name": "Destination",
+									"value": "sunny10//@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "MySqlSource",
+									"query": {
+										"value": "@item().copySource.query",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"validateDataConsistency": true,
+								"logStorageSettings": {
+									"linkedServiceName": {
+										"referenceName": "linkedService1",
+										"type": "LinkedServiceReference"
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset_2qz",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_tableName": "@item().source.tableName"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DestinationDataset_2qz",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_fileName": "@item().destination.fileName"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"tableName": "`categories`"
+						},
+						"destination": {
+							"fileName": "`categories`.txt"
+						},
+						"copySource": {
+							"query": "select * from `categories`"
+						}
+					},
+					{
+						"source": {
+							"tableName": "`customers`"
+						},
+						"destination": {
+							"fileName": "`customers`.txt"
+						},
+						"copySource": {
+							"query": "select * from `customers`"
+						}
+					},
+					{
+						"source": {
+							"tableName": "`departments`"
+						},
+						"destination": {
+							"fileName": "`departments`.txt"
+						},
+						"copySource": {
+							"query": "select * from `departments`"
+						}
+					},
+					{
+						"source": {
+							"tableName": "`order_items`"
+						},
+						"destination": {
+							"fileName": "`order_items`.txt"
+						},
+						"copySource": {
+							"query": "select * from `order_items`"
+						}
+					},
+					{
+						"source": {
+							"tableName": "`orders`"
+						},
+						"destination": {
+							"fileName": "`orders`.txt"
+						},
+						"copySource": {
+							"query": "select * from `orders`"
+						}
+					},
+					{
+						"source": {
+							"tableName": "`products`"
+						},
+						"destination": {
+							"fileName": "`products`.txt"
+						},
+						"copySource": {
+							"query": "select * from `products`"
+						}
+					}
+				]
+			}
+		},
+		"annotations": []
+	}
+}
